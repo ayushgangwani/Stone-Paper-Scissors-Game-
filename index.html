@@ -22,8 +22,9 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             width: 300px;
         }
-        h1 {
+        h1, h2 {
             color: #333;
+            margin: 5px 0;
         }
         button {
             padding: 10px 20px;
@@ -36,7 +37,7 @@
         #stone { background-color: #8b4513; color: white; }
         #paper { background-color: #4682b4; color: white; }
         #scissors { background-color: #c71585; color: white; }
-        #result {
+        #result, #score {
             margin-top: 20px;
             font-weight: bold;
         }
@@ -45,6 +46,8 @@
 <body>
     <div class="game-container">
         <h1>Stone Paper Scissors</h1>
+        <h2>Chances Left: <span id="chances-left">10</span></h2>
+        <h2>Score: <span id="score">0</span></h2>
         <p>Choose your move:</p>
         <button id="stone" onclick="playGame(0)">Stone</button>
         <button id="paper" onclick="playGame(1)">Paper</button>
@@ -53,28 +56,51 @@
     </div>
 
     <script>
-        function playGame(userChoice) {
-            const choices = ["Stone", "Paper", "Scissors"];
-            const computerChoice = Math.floor(Math.random() * 3);
+        let score = 0;
+        let chances = 10;
 
-            let result = "";
-            if (userChoice === computerChoice) {
-                result = "Draw";
-            } else if (
-                (userChoice === 0 && computerChoice === 2) ||
-                (userChoice === 1 && computerChoice === 0) ||
-                (userChoice === 2 && computerChoice === 1)
-            ) {
-                result = "You Win!";
-            } else {
-                result = "Computer Wins!";
+        function playGame(userChoice) {
+            if (chances > 0) {
+                const choices = ["Stone", "Paper", "Scissors"];
+                const computerChoice = Math.floor(Math.random() * 3);
+
+                let result = "";
+                if (userChoice === computerChoice) {
+                    result = "Draw";
+                } else if (
+                    (userChoice === 0 && computerChoice === 2) ||
+                    (userChoice === 1 && computerChoice === 0) ||
+                    (userChoice === 2 && computerChoice === 1)
+                ) {
+                    result = "You Win!";
+                    score += 1;
+                } else {
+                    result = "Computer Wins!";
+                    score -= 1;
+                }
+
+                chances -= 1;
+
+                // Update the score and chances display
+                document.getElementById("score").textContent = score;
+                document.getElementById("chances-left").textContent = chances;
+
+                // Display the result of the current round
+                document.getElementById("result").innerHTML = `
+                    You chose <strong>${choices[userChoice]}</strong>, 
+                    Computer chose <strong>${choices[computerChoice]}</strong>.<br>
+                    <strong>${result}</strong>
+                `;
             }
 
-            document.getElementById("result").innerHTML = `
-                You chose <strong>${choices[userChoice]}</strong>, 
-                Computer chose <strong>${choices[computerChoice]}</strong>.<br>
-                <strong>${result}</strong>
-            `;
+            // End game after 10 chances
+            if (chances === 0) {
+                document.getElementById("result").innerHTML = `
+                    Game Over!<br>Your final score is: <strong>${score}</strong>
+                `;
+                // Disable buttons
+                document.querySelectorAll("button").forEach(button => button.disabled = true);
+            }
         }
     </script>
 </body>
