@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stone Paper Scissors Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f8ff;
+        }
+        .game-container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        h1, h2 {
+            color: #333;
+            margin: 5px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+        #stone { background-color: #8b4513; color: white; }
+        #paper { background-color: #4682b4; color: white; }
+        #scissors { background-color: #c71585; color: white; }
+        #result, #score {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Stone Paper Scissors</h1>
+        <h2>Chances Left: <span id="chances-left">10</span></h2>
+        <h2>Score: <span id="score">0</span></h2>
+        <p>Choose your move:</p>
+        <button id="stone" onclick="playGame(0)">Stone</button>
+        <button id="paper" onclick="playGame(1)">Paper</button>
+        <button id="scissors" onclick="playGame(2)">Scissors</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        let score = 0;
+        let chances = 10;
+
+        function playGame(userChoice) {
+            if (chances > 0) {
+                const choices = ["Stone", "Paper", "Scissors"];
+                const computerChoice = Math.floor(Math.random() * 3);
+
+                let result = "";
+                if (userChoice === computerChoice) {
+                    result = "Draw";
+                } else if (
+                    (userChoice === 0 && computerChoice === 2) ||
+                    (userChoice === 1 && computerChoice === 0) ||
+                    (userChoice === 2 && computerChoice === 1)
+                ) {
+                    result = "You Win!";
+                    score += 1;
+                } else {
+                    result = "Computer Wins!";
+                    score -= 1;
+                }
+
+                chances -= 1;
+
+                // Update the score and chances display
+                document.getElementById("score").textContent = score;
+                document.getElementById("chances-left").textContent = chances;
+
+                // Display the result of the current round
+                document.getElementById("result").innerHTML = `
+                    You chose <strong>${choices[userChoice]}</strong>, 
+                    Computer chose <strong>${choices[computerChoice]}</strong>.<br>
+                    <strong>${result}</strong>
+                `;
+            }
+
+            // End game after 10 chances
+            if (chances === 0) {
+                document.getElementById("result").innerHTML = `
+                    Game Over!<br>Your final score is: <strong>${score}</strong>
+                `;
+                // Disable buttons
+                document.querySelectorAll("button").forEach(button => button.disabled = true);
+            }
+        }
+    </script>
+</body>
+</html>
